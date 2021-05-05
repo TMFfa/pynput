@@ -11,7 +11,7 @@ def ms_click():
     while True:
         time.sleep(0.1)
         mouse.click(Button.left)
-        if event.key == keyboard.Key.backspace:
+        if event.key == keyboard.Key.backspace or keyboard.Key.esc:  # 防止退出后线程还在
             break
 
 
