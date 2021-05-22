@@ -1,7 +1,5 @@
-# 这是可控版本了
-
-"""
 # 这里说明一下之前遇到的问题
+"""
     在ms_click()， 我起初没用sys.exit()，便想保证按esc也能同时退出线程，便用了下面的语句：
         if event.key == keyboard.Key.backspace or Keyboard.Key.esc:
     这就有问题了，请注意！！！！
@@ -18,37 +16,35 @@
 
 import time
 import threading
-import sys
 from pynput import keyboard
 from pynput.mouse import Button, Controller as Mouse_controller
+import sys
 
 mouse = Mouse_controller()
 
 
 def ms_click():
-    print('开始连点')
     while True:
         time.sleep(0.1)
         mouse.click(Button.left)
-        if event.key == keyboard.Key.backspace:  # 防止退出后线程还在
-            print('连点结束')
+        # 注意不能用or，会又bug，而且用的话注意==优先级大于or
+        if event.key == keyboard.Key.backspace:
             break
+        # elif event.key == keyboard.Key.esc:
+        #     break
 
 
 print('press enter to start,\nand press backspace to stop,\nand press esc to quit.')
 
 # The event listener will be running in this block
-t = threading.Thread(target=ms_click)
 
 with keyboard.Events() as events:
     for event in events:
         if event.key == keyboard.Key.esc:
-            print('Received event {}'.format(event))
             sys.exit()
         elif event.key == keyboard.Key.enter:
-            print('Received event {}'.format(event))
-            t.start()
+            threading.Thread(target=ms_click).start()
         else:
             print('Received event {}'.format(event))
-# 程序开始后，按enter开始连点，按删除键停止，按esc退出程序
+# 程序开始后，按回车开始连点，按删除键停止，按esc退出程序
 # 注意只按一次啊，这是开的线程，按多了就是多个线程，自己等死吧
